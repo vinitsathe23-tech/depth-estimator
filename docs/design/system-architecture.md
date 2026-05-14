@@ -20,8 +20,9 @@ graph TB
     end
     
     subgraph Processing["⚙️ Processing Pipeline"]
+        PO["Perception Orchestrator<br/>Reusable Module"]
         DE["Depth Estimator<br/>Backend Selection"]
-        OD["Object Detector<br/>Backend Selection"]
+        OD["Object Detector[]<br/>Backend Selection"]
         CE["Calibration Engine<br/>Distance Mapping"]
         PE["Position Estimator<br/>3D Coordinates"]
     end
@@ -39,15 +40,14 @@ graph TB
     
     WC --> VC
     VC --> FRAME_BUFFER
-    FRAME_BUFFER --> DE
-    FRAME_BUFFER --> OD
-    DE --> CE
-    OD --> CE
-    CE --> PE
-    PE --> VIZ
-    PE --> EXPORT
-    CONFIG -.->|controls| DE
-    CONFIG -.->|controls| OD
+    FRAME_BUFFER --> PO
+    PO --> DE
+    PO --> OD
+    PO --> CE
+    PO --> PE
+    PO --> VIZ
+    PO --> EXPORT
+    CONFIG -.->|controls| PO
     CAL -.->|used by| CE
     
     style Input fill:#e3f2fd
@@ -77,6 +77,18 @@ graph TB
 - `get_properties() -> dict`
 
 ### 3.2 Processing Components
+
+#### PerceptionOrchestrator
+**Purpose**: Coordinate frame processing through reusable depth and object-detection backends.
+
+**Responsibilities**:
+- Own per-frame scheduling for depth refresh and detector refresh intervals
+- Run one or more configured object detectors
+- Return a `PerceptionResult` containing frame, depth map, detections, primary detection, and timing metadata
+- Keep processing independent from visualization so future apps can reuse the module
+
+**Key Methods**:
+- `process_frame(frame: np.ndarray, calibration_scale: float | None) -> PerceptionResult`
 
 #### DepthEstimator (Abstract)
 **Purpose**: Provide pluggable depth estimation backends
@@ -114,7 +126,7 @@ graph TB
    - Class filter: cell phone only
 
 **Key Methods**:
-- `detect(frame: np.ndarray, depth: np.ndarray) -> Detection[]`
+- `detect(frame: np.ndarray, depth: np.ndarray, calibration_scale: float | None) -> Detection[]`
 - `preload_model()`
 - `is_available() -> bool`
 
@@ -128,6 +140,16 @@ class DetectedObject:
     x_m: float | None                # lateral position
     label: str                       # object label
     confidence: float | None         # detection confidence
+```
+
+**Perception Result Object**:
+```python
+class PerceptionResult:
+    frame: np.ndarray
+    depth: np.ndarray
+    detections: list[DetectedObject]
+    primary_detection: DetectedObject | None
+    timings_ms: dict[str, float]
 ```
 
 #### CalibrationEngine
@@ -232,29 +254,32 @@ timestamp,frame_number,x_m,z_m,confidence,bbox_x1,bbox_y1,bbox_x2,bbox_y2
 ```mermaid
 sequenceDiagram
     participant FC as FrameCapture
+    participant PO as PerceptionOrchestrator
     participant DE as DepthEstimator
     participant OD as ObjectDetector
     participant CE as CalibrationEngine
     participant PE as PositionEstimator
     participant VIZ as Visualizer
     
-    FC->>DE: frame
-    FC->>OD: frame
-    DE->>CE: depth_map
-    OD->>CE: detection
-    CE->>PE: detection + depth
-    PE->>VIZ: position
+    FC->>PO: frame
+    PO->>DE: frame when depth refresh is due
+    DE-->>PO: depth_map
+    PO->>OD: frame + depth for configured detectors
+    OD-->>PO: detections
+    PO->>CE: primary detection + depth
+    PO->>PE: calibrated detection
+    PO->>VIZ: PerceptionResult
     VIZ->>VIZ: render
 ```
 
 ## 5. Design Patterns
 
 ### 5.1 Strategy Pattern
-**Usage**: `DepthEstimator` and `ObjectDetector` abstract classes  
+**Usage**: `DepthEstimator` and `ObjectDetector` abstract classes consumed by `PerceptionOrchestrator`  
 **Benefit**: Pluggable backends without modifying core logic
 
 ### 5.2 Factory Pattern
-**Usage**: `DepthEstimatorFactory` and `DetectorFactory`  
+**Usage**: Depth estimator and detector creation helpers  
 **Benefit**: Centralized instantiation of backends based on configuration
 
 ### 5.3 State Pattern
@@ -269,12 +294,13 @@ sequenceDiagram
 
 ```mermaid
 graph LR
-    A["FrameCapture<br/>OpenCV"] -->|frame| B["Pipeline<br/>Core Logic"]
+    A["FrameCapture<br/>OpenCV"] -->|frame| B["PerceptionOrchestrator<br/>Reusable Module"]
     C["PyTorch<br/>Depth Model"] -->|weights| B
     D["Ultralytics<br/>YOLO"] -->|weights| B
     E["Config Files<br/>YAML/JSON"] -->|config| B
-    B -->|display| F["OpenCV<br/>Viewer"]
-    B -->|export| G["File System<br/>CSV/MP4"]
+    B -->|result| F["OpenCV<br/>Viewer"]
+    B -->|result| G["Future Apps<br/>Batch or Web UI"]
+    F -->|export| H["File System<br/>CSV/MP4"]
 ```
 
 ## 7. Quality Attributes

@@ -21,9 +21,15 @@ All notable project changes are recorded here.
 - Removed the fixed obstacle-risk ROI overlay and risk score from the live depth sandbox display.
 - Changed calibration behavior so it is skipped when no object is detected instead of falling back to the removed ROI.
 - Simplified the live display from four panels to three panels by removing the duplicate raw camera frame; the camera is now shown once with overlays.
+- Routed `app/depth_sandbox.py` through the reusable perception orchestrator and added comma-separated detector selection such as `--object-detector depth-blob,yolo-phone`.
+- Updated ASPICE requirements, architecture, viewer design page, and verification plan for the orchestrator traceability path.
 
 ### Added
 
+- Added a reusable perception orchestrator module:
+  - `app/perception_orchestrator.py`
+  - Coordinates depth refresh, one or more object detectors, primary detection selection, and timing metadata.
+  - Returns frame, depth, detections, primary detection, and timings so other apps can reuse the processing result.
 - Added placeholder V-model documents for traceability and verification:
   - `docs/traceability/requirements-traceability-matrix.md`
   - `docs/verification/test-plan.md`
@@ -34,3 +40,5 @@ All notable project changes are recorded here.
 
 - Ran stale-reference scans for old moved paths after the folder reorganization.
 - Compiled `app/depth_sandbox.py` with the `depth-sandbox` Conda environment after the calibration and overlay changes.
+- Compiled `app/depth_sandbox.py`, `app/perception_orchestrator.py`, and `app/v_model_viewer.py` with `py_compile`.
+- Ran a no-camera orchestrator smoke check with a dummy depth estimator and depth-blob detector.

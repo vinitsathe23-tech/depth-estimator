@@ -43,7 +43,13 @@ This document specifies software requirements derived from system requirements. 
 | **SWE-F-OD-005** | Handle no-detection case gracefully | SYS-NF-005 |
 | **SWE-F-OD-006** | Support confidence threshold filtering | SYS-F-003 |
 
-### 2.4 Distance Estimation (SWE-REQ-DE)
+### 2.4 Perception Orchestration (SWE-REQ-PO)
+
+| ID | Requirement | Traceability |
+|----|----|---|
+| **SWE-F-PO-001** | Provide a reusable perception orchestrator module that coordinates configured depth and object-detection backends and returns frame, depth map, detections, primary detection, and timing metadata for real-time overlays or future applications | SYS-F-002, SYS-F-003, SYS-F-005, SYS-NF-001 |
+
+### 2.5 Distance Estimation (SWE-REQ-DE)
 
 | ID | Requirement | Traceability |
 |----|----|---|
@@ -54,7 +60,7 @@ This document specifies software requirements derived from system requirements. 
 | **SWE-F-DE-005** | Store calibration state for persistence across frames | SYS-F-004 |
 | **SWE-F-DE-006** | Support recalibration on demand | SYS-F-004 |
 
-### 2.5 Visualization (SWE-REQ-V)
+### 2.6 Visualization (SWE-REQ-V)
 
 | ID | Requirement | Traceability |
 |----|----|---|
@@ -66,7 +72,7 @@ This document specifies software requirements derived from system requirements. 
 | **SWE-F-V-006** | Update visualization at same rate as frame capture (no lag) | SYS-NF-001 |
 | **SWE-F-V-007** | Support window resizing without losing display quality | SYS-F-006 |
 
-### 2.6 Data Output (SWE-REQ-O)
+### 2.7 Data Output (SWE-REQ-O)
 
 | ID | Requirement | Traceability |
 |----|----|---|
@@ -75,7 +81,7 @@ This document specifies software requirements derived from system requirements. 
 | **SWE-F-O-003** | Create timestamped output files to avoid overwriting | SYS-F-007 |
 | **SWE-F-O-004** | Implement optional video output (MP4/AVI) with overlays | SYS-F-007 |
 
-### 2.7 Configuration & CLI (SWE-REQ-C)
+### 2.8 Configuration & CLI (SWE-REQ-C)
 
 | ID | Requirement | Traceability |
 |----|----|---|
@@ -130,14 +136,15 @@ This document specifies software requirements derived from system requirements. 
 - GPU via CUDA/PyTorch
 
 ### 5.2 Internal Module Interfaces
-- `FrameCapture` → `DepthEstimator` (frame → depth map)
-- `DepthEstimator` + `FrameCapture` → `ObjectDetector` (frame + depth → detections)
-- `ObjectDetector` + `DepthMap` → `CalibrationEngine` (detection + depth → position)
-- All modules → `Visualizer` (data → display)
+- `FrameCapture` → `PerceptionOrchestrator` (frame → perception result)
+- `PerceptionOrchestrator` → `DepthEstimator` (frame → depth map)
+- `PerceptionOrchestrator` → `ObjectDetector[]` (frame + depth → detections)
+- `PerceptionOrchestrator` → `Visualizer` (frame + depth + primary detection → display)
+- `PerceptionOrchestrator` → future apps (frame + depth + detections + timing metadata)
 
 ## 6. Traceability Summary
 
-**Total SWE Requirements**: 43  
+**Total SWE Requirements**: 44  
 **Mapped to SYS Requirements**: 100%  
 **High Priority**: 28  
 **Medium Priority**: 15
