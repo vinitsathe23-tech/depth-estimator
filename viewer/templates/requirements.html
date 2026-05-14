@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Requirements - ASPICE V-Model Viewer{% endblock %}
+
+{% block content %}
+<h1>📋 Requirements Specification</h1>
+
+<div class="breadcrumb">
+    <a href="/">Home</a> / Requirements
+</div>
+
+<div class="tabs">
+    <div class="tab active" onclick="showTab('sys-functional')">System Functional</div>
+    <div class="tab" onclick="showTab('sys-nfunctional')">System Non-Functional</div>
+    <div class="tab" onclick="showTab('swe-input')">SWE Input (I)</div>
+    <div class="tab" onclick="showTab('swe-depth')">SWE Depth (D)</div>
+    <div class="tab" onclick="showTab('swe-detection')">SWE Detection (OD)</div>
+    <div class="tab" onclick="showTab('swe-distance')">SWE Distance (DE)</div>
+    <div class="tab" onclick="showTab('swe-visual')">SWE Visualization (V)</div>
+    <div class="tab" onclick="showTab('swe-output')">SWE Output (O)</div>
+    <div class="tab" onclick="showTab('swe-config')">SWE Config (C)</div>
+</div>
+
+<div id="sys-functional" class="tab-content active">
+    <h2>System-Level Functional Requirements</h2>
+    
+    {% for req in req_tree.system.functional %}
+    <div class="requirement-card">
+        <h4>
+            <span class="requirement-id">{{ req.id }}</span>
+            {% if req.priority == 'HIGH' %}
+                <span class="priority-high">HIGH</span>
+            {% elif req.priority == 'MEDIUM' %}
+                <span class="priority-medium">MEDIUM</span>
+            {% else %}
+                <span class="priority-low">LOW</span>
+            {% endif %}
+        </h4>
+        <p><strong>{{ req.title }}</strong></p>
+        <p>{{ req.description }}</p>
+        <p style="font-size: 12px; color: #666; margin-top: 10px;">
+            <em>Section: {{ req.section }}</em>
+        </p>
+    </div>
+    {% endfor %}
+</div>
+
+<div id="sys-nfunctional" class="tab-content">
+    <h2>System-Level Non-Functional Requirements</h2>
+    
+    <div style="margin-bottom: 20px;">
+        <h4>Quality Attributes</h4>
+        <ul style="margin-left: 20px;">
+            <li><strong>Performance:</strong> Frame processing latency, model initialization</li>
+            <li><strong>Reliability:</strong> System uptime, error recovery</li>
+            <li><strong>Usability:</strong> CLI interface, real-time feedback</li>
+            <li><strong>Maintainability:</strong> Code modularity, documentation</li>
+        </ul>
+    </div>
+    
+    {% for req in req_tree.system.non_functional %}
+    <div class="requirement-card">
+        <h4>
+            <span class="requirement-id">{{ req.id }}</span>
+            {% if req.priority == 'HIGH' %}
+                <span class="priority-high">HIGH</span>
+            {% elif req.priority == 'MEDIUM' %}
+                <span class="priority-medium">MEDIUM</span>
+            {% else %}
+                <span class="priority-low">LOW</span>
+            {% endif %}
+        </h4>
+        <p><strong>{{ req.title }}</strong></p>
+        <p>{{ req.description }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div id="swe-input" class="tab-content">
+    <h2>Software Requirements - Input Management (SWE-F-I)</h2>
+    <p>Requirements for handling video input from webcam or file sources.</p>
+    
+    {% for req in req_tree.software.input %}
+    <div class="requirement-card">
+        <h4>
+            <span class="requirement-id">{{ req.id }}</span>
+            <span class="priority-high">HIGH</span>
+        </h4>
+        <p><strong>{{ req.title }}</strong></p>
+        <p>{{ req.description }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div id="swe-depth" class="tab-content">
+    <h2>Software Requirements - Depth Estimation (SWE-F-D)</h2>
+    <p>Requirements for depth estimation backends and processing.</p>
+    
+    {% for req in req_tree.software.depth %}
+    <div class="requirement-card">
+        <h4>
+            <span class="requirement-id">{{ req.id }}</span>
+            <span class="priority-high">HIGH</span>
+        </h4>
+        <p><strong>{{ req.title }}</strong></p>
+        <p>{{ req.description }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div id="swe-detection" class="tab-content">
+    <h2>Software Requirements - Object Detection (SWE-F-OD)</h2>
+    <p>Requirements for object detection backends and processing.</p>
+    
+    {% for req in req_tree.software.detection %}
+    <div class="requirement-card">
+        <h4>
+            <span class="requirement-id">{{ req.id }}</span>
+            <span class="priority-high">HIGH</span>
+        </h4>
+        <p><strong>{{ req.title }}</strong></p>
+        <p>{{ req.description }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div id="swe-distance" class="tab-content">
+    <h2>Software Requirements - Distance Estimation (SWE-F-DE)</h2>
+    <p>Requirements for distance calibration and 3D position estimation.</p>
+    
+    {% for req in req_tree.software.distance %}
+    <div class="requirement-card">
+        <h4>
+            <span class="requirement-id">{{ req.id }}</span>
+            <span class="priority-high">HIGH</span>
+        </h4>
+        <p><strong>{{ req.title }}</strong></p>
+        <p>{{ req.description }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div id="swe-visual" class="tab-content">
+    <h2>Software Requirements - Visualization (SWE-F-V)</h2>
+    <p>Requirements for real-time visualization and display.</p>
+    
+    {% for req in req_tree.software.visualization %}
+    <div class="requirement-card">
+        <h4>
+            <span class="requirement-id">{{ req.id }}</span>
+            <span class="priority-high">HIGH</span>
+        </h4>
+        <p><strong>{{ req.title }}</strong></p>
+        <p>{{ req.description }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div id="swe-output" class="tab-content">
+    <h2>Software Requirements - Data Output (SWE-F-O)</h2>
+    <p>Requirements for exporting processed data and results.</p>
+    
+    {% for req in req_tree.software.output %}
+    <div class="requirement-card">
+        <h4>
+            <span class="requirement-id">{{ req.id }}</span>
+            <span class="priority-medium">MEDIUM</span>
+        </h4>
+        <p><strong>{{ req.title }}</strong></p>
+        <p>{{ req.description }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div id="swe-config" class="tab-content">
+    <h2>Software Requirements - Configuration & CLI (SWE-F-C)</h2>
+    <p>Requirements for configuration management and command-line interface.</p>
+    
+    {% for req in req_tree.software.config %}
+    <div class="requirement-card">
+        <h4>
+            <span class="requirement-id">{{ req.id }}</span>
+            <span class="priority-medium">MEDIUM</span>
+        </h4>
+        <p><strong>{{ req.title }}</strong></p>
+        <p>{{ req.description }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+function showTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.add('active');
+    event.target.classList.add('active');
+}
+</script>
+{% endblock %}

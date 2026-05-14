@@ -8,6 +8,10 @@ webcam/video -> depth estimation -> object detection -> calibrated distance -> 3
 
 The project starts simple but points toward robotics and ADAS-style perception work. It can run with a fast OpenCV pseudo-depth backend, or with Depth Anything v2 Small on an NVIDIA GPU. It can also use YOLO to detect a phone and estimate how far away it is.
 
+## Agent Change Guideline
+
+Before modifying this project, any agent must perform change impact analysis and give the user a concise overview of affected files, requirements, traceability, risks, and proposed steps. See [AGENTS.md](AGENTS.md) for the required workflow and [CHANGE_IMPACT_ANALYSIS.md](docs/aspice/CHANGE_IMPACT_ANALYSIS.md) for the analysis framework.
+
 ## Project Goals
 
 - Build a runnable real-time camera pipeline.
@@ -94,7 +98,7 @@ cd C:\Users\Vinit\Documents\WFM\monocular-depth-sandbox
 conda create -n depth-sandbox python=3.11 -y
 conda activate depth-sandbox
 python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
-python -m pip install -r requirements.txt
+python -m pip install -r requirements/runtime.txt
 ```
 
 Check CUDA:
@@ -115,19 +119,19 @@ NVIDIA GeForce RTX 4060 Ti
 Fast OpenCV placeholder:
 
 ```powershell
-python src/depth_sandbox.py --source 0 --backend pseudo
+python app/depth_sandbox.py --source 0 --backend pseudo
 ```
 
 Depth Anything v2 Small:
 
 ```powershell
-python src/depth_sandbox.py --source 0 --backend depth-anything --device cuda --depth-every 3
+python app/depth_sandbox.py --source 0 --backend depth-anything --device cuda --depth-every 3
 ```
 
 YOLO phone tracking with distance estimate:
 
 ```powershell
-python src/depth_sandbox.py --source 0 --backend depth-anything --device cuda --depth-every 3 --object-detector yolo-phone --detect-every 3 --known-distance-m 1.0
+python app/depth_sandbox.py --source 0 --backend depth-anything --device cuda --depth-every 3 --object-detector yolo-phone --detect-every 3 --known-distance-m 1.0
 ```
 
 If it is slow, increase either value:
@@ -200,14 +204,26 @@ classDiagram
 ```text
 monocular-depth-sandbox/
   README.md
-  requirements.txt
-  requirements-gpu.txt
+  AGENTS.md
+  QUICK_START.md
+  app/
+    depth_sandbox.py
+    v_model_viewer.py
+  requirements/
+    runtime.txt
+    gpu.txt
+    viewer.txt
+  viewer/
+    README.md
+    templates/
+  docs/
+    aspice/
+    requirements/
+    design/
+    v-model/
   data/
     input/
     output/
-    yolo_config/
-  src/
-    depth_sandbox.py
 ```
 
 ## Limitations

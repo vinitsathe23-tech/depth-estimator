@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}V-Model Overview - ASPICE V-Model Viewer{% endblock %}
+
+{% block content %}
+<h1>📋 ASPICE V-Model Overview</h1>
+
+<div class="breadcrumb">
+    <strong>Project:</strong> Monocular Depth Sandbox | 
+    <strong>Model:</strong> V-Model with Traceability |
+    <strong>Status:</strong> Active
+</div>
+
+<h2>Requirements Summary</h2>
+
+<div id="summary-stats">
+    <div class="stat-box">
+        <span>System Requirements</span>
+        <strong id="sys-total">-</strong>
+        <span style="font-size: 10px;">
+            <strong id="sys-high" style="color: #ffcdd2;">-</strong> High |
+            <strong id="sys-medium" style="color: #ffe0b2;">-</strong> Medium |
+            <strong id="sys-low" style="color: #c8e6c9;">-</strong> Low
+        </span>
+    </div>
+    
+    <div class="stat-box">
+        <span>Software Requirements</span>
+        <strong id="sw-total">-</strong>
+        <span style="font-size: 10px;">
+            <strong id="sw-high" style="color: #ffcdd2;">-</strong> High |
+            <strong id="sw-medium" style="color: #ffe0b2;">-</strong> Medium |
+            <strong id="sw-low" style="color: #c8e6c9;">-</strong> Low
+        </span>
+    </div>
+</div>
+
+<h2>V-Model Lifecycle</h2>
+
+<div class="mermaid">
+{{ vmodel_content.split('```mermaid')[1].split('```')[0] if '```mermaid' in vmodel_content else '' }}
+</div>
+
+<h2>V-Model Phases Explained</h2>
+
+<div class="tabs">
+    <div class="tab active" onclick="showPhase('left-side')">Left Side: Definition</div>
+    <div class="tab" onclick="showPhase('right-side')">Right Side: Verification</div>
+    <div class="tab" onclick="showPhase('principles')">Key Principles</div>
+</div>
+
+<div id="left-side" class="tab-content active">
+    <h3>🔽 Descending Phase - Definition & Design</h3>
+    
+    <div class="requirement-card">
+        <h4>1. Requirements Analysis (REQ)</h4>
+        <p><strong>What:</strong> Define what the system should do</p>
+        <p><strong>Components:</strong> SYS-REQ (System), SWE-REQ (Software)</p>
+        <p><strong>Artifacts:</strong> Requirements specifications, use cases</p>
+        <p><strong>Phase Goal:</strong> Create complete and clear requirements</p>
+    </div>
+    
+    <div class="requirement-card">
+        <h4>2. System Design (SWE2)</h4>
+        <p><strong>What:</strong> Design the high-level architecture</p>
+        <p><strong>Components:</strong> Architecture, component interactions, interfaces</p>
+        <p><strong>Artifacts:</strong> Architecture documents, design specifications</p>
+        <p><strong>Phase Goal:</strong> Create blueprint for implementation</p>
+    </div>
+    
+    <div class="requirement-card">
+        <h4>3. Detailed Design (SWE3)</h4>
+        <p><strong>What:</strong> Design each component in detail</p>
+        <p><strong>Components:</strong> Data structures, algorithms, interfaces</p>
+        <p><strong>Artifacts:</strong> Detailed design documents, component specs</p>
+        <p><strong>Phase Goal:</strong> Ready for implementation</p>
+    </div>
+    
+    <div class="requirement-card">
+        <h4>4. Implementation (SWE4)</h4>
+        <p><strong>What:</strong> Write the code</p>
+        <p><strong>Components:</strong> Source code, documentation</p>
+        <p><strong>Artifacts:</strong> Code, inline documentation</p>
+        <p><strong>Phase Goal:</strong> Build working software</p>
+    </div>
+</div>
+
+<div id="right-side" class="tab-content">
+    <h3>🔼 Ascending Phase - Verification & Validation</h3>
+    
+    <div class="requirement-card">
+        <h4>5. Unit Testing</h4>
+        <p><strong>What:</strong> Test individual components</p>
+        <p><strong>Verifies:</strong> Detailed Design (SWE3)</p>
+        <p><strong>Artifacts:</strong> Unit test cases, unit test reports</p>
+        <p><strong>Phase Goal:</strong> Ensure components work correctly</p>
+    </div>
+    
+    <div class="requirement-card">
+        <h4>6. Integration Testing (SWE5)</h4>
+        <p><strong>What:</strong> Test component interactions</p>
+        <p><strong>Verifies:</strong> System Design (SWE2)</p>
+        <p><strong>Artifacts:</strong> Integration test cases, integration reports</p>
+        <p><strong>Phase Goal:</strong> Ensure components work together</p>
+    </div>
+    
+    <div class="requirement-card">
+        <h4>7. System Testing (SWE6)</h4>
+        <p><strong>What:</strong> Test complete system</p>
+        <p><strong>Verifies:</strong> Software Requirements (SWE-REQ)</p>
+        <p><strong>Artifacts:</strong> System test cases, system test reports</p>
+        <p><strong>Phase Goal:</strong> Ensure system meets all requirements</p>
+    </div>
+    
+    <div class="requirement-card">
+        <h4>8. Acceptance Testing (VAL)</h4>
+        <p><strong>What:</strong> Test user acceptance</p>
+        <p><strong>Validates:</strong> System Requirements (SYS-REQ)</p>
+        <p><strong>Artifacts:</strong> Acceptance test cases, validation reports</p>
+        <p><strong>Phase Goal:</strong> Ensure right thing is built</p>
+    </div>
+</div>
+
+<div id="principles" class="tab-content">
+    <h3>🎯 Key Principles of the V-Model</h3>
+    
+    <div class="requirement-card">
+        <h4>✓ Traceability</h4>
+        <p>Every requirement is traced through design to code to tests. Changes at any level are reflected throughout.</p>
+    </div>
+    
+    <div class="requirement-card">
+        <h4>✓ Verification</h4>
+        <p>Ensures that <strong>what is built is built correctly</strong>. Design is verified by code, code is verified by unit tests.</p>
+    </div>
+    
+    <div class="requirement-card">
+        <h4>✓ Validation</h4>
+        <p>Ensures that <strong>the right thing is built</strong>. Requirements are validated by acceptance tests.</p>
+    </div>
+    
+    <div class="requirement-card">
+        <h4>✓ Quality Gates</h4>
+        <p>Each phase has defined entry and exit criteria. Only proceed when phase is complete and verified.</p>
+    </div>
+    
+    <div class="requirement-card">
+        <h4>✓ Bidirectional Verification</h4>
+        <p>Verification flows both directions: down the left side through design and up the right side through testing.</p>
+    </div>
+</div>
+
+<h2>Quick Navigation</h2>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+    <div style="background: linear-gradient(135deg, #e1f5ff 0%, #b3e5fc 100%); padding: 20px; border-radius: 6px; cursor: pointer;" onclick="window.location='/requirements'">
+        <h4 style="color: #0277bd; margin-top: 0;">📋 Requirements</h4>
+        <p style="font-size: 12px; color: #0277bd;">View system and software requirements</p>
+    </div>
+    
+    <div style="background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); padding: 20px; border-radius: 6px; cursor: pointer;" onclick="window.location='/design'">
+        <h4 style="color: #6a1b9a; margin-top: 0;">🏗️ Design</h4>
+        <p style="font-size: 12px; color: #6a1b9a;">Explore system and detailed design</p>
+    </div>
+    
+    <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); padding: 20px; border-radius: 6px; cursor: pointer;" onclick="window.location='/traceability'">
+        <h4 style="color: #e65100; margin-top: 0;">🔗 Traceability</h4>
+        <p style="font-size: 12px; color: #e65100;">View requirements-to-design-to-code mapping</p>
+    </div>
+</div>
+
+<h2>ASPICE Alignment</h2>
+
+<p>This V-Model aligns with <strong>ASPICE (Automotive SPICE)</strong> process model:</p>
+
+<ul style="margin-left: 20px; line-height: 1.8;">
+    <li><strong>SWE2:</strong> Ensures well-structured system design</li>
+    <li><strong>SWE3:</strong> Ensures detailed design before coding</li>
+    <li><strong>SWE4:</strong> Ensures code follows design</li>
+    <li><strong>SWE5:</strong> Ensures integration verification</li>
+    <li><strong>SWE6:</strong> Ensures system verification</li>
+    <li><strong>SWE7:</strong> Ensures software release</li>
+</ul>
+
+<h2>Project Information</h2>
+
+<table>
+    <tr>
+        <th>Attribute</th>
+        <th>Value</th>
+    </tr>
+    <tr>
+        <td><strong>Project Name</strong></td>
+        <td>Monocular Depth Sandbox</td>
+    </tr>
+    <tr>
+        <td><strong>Purpose</strong></td>
+        <td>Real-time perception pipeline combining depth estimation, object detection, and distance calibration</td>
+    </tr>
+    <tr>
+        <td><strong>Model Type</strong></td>
+        <td>V-Model with Full Traceability</td>
+    </tr>
+    <tr>
+        <td><strong>Documentation Status</strong></td>
+        <td>Active (v1.0)</td>
+    </tr>
+    <tr>
+        <td><strong>Last Updated</strong></td>
+        <td>May 2026</td>
+    </tr>
+    <tr>
+        <td><strong>Compliance</strong></td>
+        <td>ASPICE (Automotive SPICE)</td>
+    </tr>
+</table>
+
+<script>
+function showPhase(phaseId) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+    
+    // Show selected content
+    document.getElementById(phaseId).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// Load requirements summary
+fetch('/api/requirements/summary')
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('sys-total').textContent = data.system.total;
+        document.getElementById('sys-high').textContent = data.system.high;
+        document.getElementById('sys-medium').textContent = data.system.medium;
+        document.getElementById('sys-low').textContent = data.system.low;
+        
+        document.getElementById('sw-total').textContent = data.software.total;
+        document.getElementById('sw-high').textContent = data.software.high;
+        document.getElementById('sw-medium').textContent = data.software.medium;
+        document.getElementById('sw-low').textContent = data.software.low;
+    });
+</script>
+{% endblock %}

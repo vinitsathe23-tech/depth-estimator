@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Traceability Matrix - ASPICE V-Model Viewer{% endblock %}
+
+{% block content %}
+<h1>🔗 Requirements Traceability Matrix (RTM)</h1>
+
+<div class="breadcrumb">
+    <a href="/">Home</a> / Traceability
+</div>
+
+<p><strong>Purpose:</strong> This matrix traces the relationship between software requirements (SWE-REQ) and system requirements (SYS-REQ), ensuring complete coverage and no orphaned requirements.</p>
+
+<h2>Traceability Overview</h2>
+
+<div style="background: #f0f8ff; padding: 20px; border-radius: 6px; margin: 20px 0;">
+    <p><strong>Total Software Requirements:</strong> {{ sw_reqs|length }}</p>
+    <p><strong>Total System Requirements:</strong> {{ sys_reqs|length }}</p>
+    <p><strong>Coverage:</strong> {{ (rtm|selectattr('sys_ids')|list|length / sw_reqs|length * 100)|round(1) }}% of SWE-REQ traced to SYS-REQ</p>
+</div>
+
+<h2>Requirements Traceability Matrix</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>SWE-REQ ID</th>
+            <th>Title</th>
+            <th>Priority</th>
+            <th>Traced to SYS-REQ</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in rtm %}
+        <tr>
+            <td><span class="requirement-id">{{ item.sw_id }}</span></td>
+            <td>{{ item.sw_title }}</td>
+            <td>
+                {% if item.priority == 'HIGH' %}
+                    <span class="priority-high">HIGH</span>
+                {% elif item.priority == 'MEDIUM' %}
+                    <span class="priority-medium">MEDIUM</span>
+                {% else %}
+                    <span class="priority-low">LOW</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if item.sys_ids %}
+                    {% for sys_id in item.sys_ids %}
+                        <span style="background: #e8f5e9; padding: 2px 8px; border-radius: 3px; margin-right: 5px; font-family: monospace; font-size: 12px;">{{ sys_id }}</span>
+                    {% endfor %}
+                {% else %}
+                    <span style="background: #ffebee; padding: 2px 8px; border-radius: 3px; color: #c62828; font-weight: 600; font-size: 11px;">NOT TRACED</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if item.sys_ids %}
+                    <span style="color: #2e7d32; font-weight: 600;">✓ OK</span>
+                {% else %}
+                    <span style="color: #c62828; font-weight: 600;">⚠ ORPHANED</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Traceability Flow</h2>
+
+<div class="mermaid">
+graph TD
+    A["System Requirements<br/>SYS-REQ<br/>What the system must do"] -->|decomposed into| B["Software Requirements<br/>SWE-REQ<br/>What software must do"]
+    B -->|designed in| C["System Architecture<br/>SWE2<br/>High-level design"]
+    C -->|refined by| D["Detailed Design<br/>SWE3<br/>Component design"]
+    D -->|implemented in| E["Source Code<br/>SWE4<br/>Python implementation"]
+    
+    E -->|verified by| F["Unit Tests<br/>Test components"]
+    F -->|verified by| G["Integration Tests<br/>Test interactions"]
+    G -->|verified by| H["System Tests<br/>Test complete system"]
+    H -->|validated by| I["Acceptance Tests<br/>Test user requirements"]
+    
+    I -.->|traces back to| A
+    
+    style A fill:#e1f5ff
+    style B fill:#e1f5ff
+    style C fill:#f3e5f5
+    style D fill:#fff3e0
+    style E fill:#f1f8e9
+    style F fill:#fce4ec
+    style G fill:#ede7f6
+    style H fill:#e0f2f1
+    style I fill:#fff9c4
