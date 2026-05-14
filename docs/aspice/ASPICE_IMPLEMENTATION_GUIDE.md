@@ -178,7 +178,7 @@ Navigate to: `http://localhost:5000`
 - **ObjectDetector**: Pluggable detection backends (Depth-Blob, YOLO)
 - **CalibrationEngine**: One-point calibration system
 - **PositionEstimator**: 3D coordinate calculation
-- **Visualizer**: 4-panel real-time display
+- **Visualizer**: 3-panel real-time display
 - **DataExporter**: Output in frames, CSV, JSON, MP4
 
 ---

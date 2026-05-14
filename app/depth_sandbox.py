@@ -246,8 +246,8 @@ def detect_nearest_object(
         x, y, w, h = cv2.boundingRect(contour)
         if w < 12 or h < 12:
             continue
-        roi_depth = float(np.mean(depth[y : y + h, x : x + w]))
-        candidates.append((roi_depth, contour))
+        candidate_depth = float(np.mean(depth[y : y + h, x : x + w]))
+        candidates.append((candidate_depth, contour))
 
     if not candidates:
         return None
@@ -262,55 +262,11 @@ def detect_nearest_object(
     return DetectedObject((x, y, w, h), center, relative_depth, distance_m, x_m)
 
 
-def build_risk_overlay(
+def build_detection_overlay(
     frame: np.ndarray,
-    depth: np.ndarray,
-    calibration_scale: float | None,
     detected: DetectedObject | None,
-) -> tuple[np.ndarray, float, float | None]:
-    height, width = depth.shape
-
-    roi_x1 = int(width * 0.35)
-    roi_x2 = int(width * 0.65)
-    roi_y1 = int(height * 0.60)
-    roi_y2 = int(height * 0.95)
-
-    roi = depth[roi_y1:roi_y2, roi_x1:roi_x2]
-    risk = float(np.mean(roi))
-    distance_m = estimate_distance_meters(risk, calibration_scale)
-
+) -> np.ndarray:
     overlay = frame.copy()
-    color = (0, 220, 0)
-    label = "LOW"
-    if risk > 0.62:
-        color = (0, 0, 255)
-        label = "HIGH"
-    elif risk > 0.48:
-        color = (0, 180, 255)
-        label = "MED"
-
-    cv2.rectangle(overlay, (roi_x1, roi_y1), (roi_x2, roi_y2), color, 2)
-    cv2.putText(
-        overlay,
-        f"Obstacle risk: {label} ({risk:.2f})",
-        (24, 40),
-        cv2.FONT_HERSHEY_SIMPLEX,
-        0.8,
-        color,
-        2,
-        cv2.LINE_AA,
-    )
-    if distance_m is not None:
-        cv2.putText(
-            overlay,
-            f"Estimated distance: {distance_m:.2f} m",
-            (24, 76),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.8,
-            color,
-            2,
-            cv2.LINE_AA,
-        )
 
     if detected is not None:
         x, y, w, h = detected.bbox
@@ -326,7 +282,7 @@ def build_risk_overlay(
         cv2.putText(
             overlay,
             object_label,
-            (24, 112),
+            (24, 40),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.7,
             (255, 255, 255),
@@ -336,15 +292,15 @@ def build_risk_overlay(
     else:
         cv2.putText(
             overlay,
-            "Distance: uncalibrated",
-            (24, 76),
+            "No detected object",
+            (24, 40),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.8,
             (220, 220, 220),
             2,
             cv2.LINE_AA,
         )
-    return overlay, risk, distance_m
+    return overlay
 
 
 def draw_position_plot(detected: DetectedObject | None, height: int = 360, width: int = 360) -> np.ndarray:
@@ -383,7 +339,6 @@ def draw_position_plot(detected: DetectedObject | None, height: int = 360, width
 
 
 def compose_view(
-    frame: np.ndarray,
     depth: np.ndarray,
     overlay: np.ndarray,
     detected: DetectedObject | None,
@@ -394,7 +349,7 @@ def compose_view(
     target_height = 360
     views = []
     position_plot = draw_position_plot(detected, target_height, 360)
-    for image in (frame, heatmap, overlay, position_plot):
+    for image in (overlay, heatmap, position_plot):
         scale = target_height / image.shape[0]
         resized = cv2.resize(image, (int(image.shape[1] * scale), target_height))
         views.append(resized)
@@ -459,9 +414,9 @@ def run(
         else:
             last_detected = None
 
-        overlay, risk, _distance_m = build_risk_overlay(frame, depth, calibration_scale, last_detected)
+        overlay = build_detection_overlay(frame, last_detected)
         detected = last_detected
-        view = compose_view(frame, depth, overlay, detected)
+        view = compose_view(depth, overlay, detected)
         frame_index += 1
 
         cv2.imshow("Monocular Depth Sandbox", view)
@@ -473,11 +428,16 @@ def run(
             saved_path = save_snapshot(view)
             print(f"Saved {saved_path}")
         if key == ord("c"):
-            calibration_scale = known_distance_m * max(risk, EPSILON)
-            print(
-                "Calibrated distance scale "
-                f"using ROI depth {risk:.3f} at {known_distance_m:.2f} m"
-            )
+            if detected is not None:
+                calibration_depth = max(detected.relative_depth, EPSILON)
+                calibration_scale = known_distance_m * calibration_depth
+                print(
+                    "Calibrated distance scale "
+                    f"using detected {detected.label} depth {calibration_depth:.3f} "
+                    f"at {known_distance_m:.2f} m"
+                )
+            else:
+                print("Calibration skipped: no detected object. Wait for a box, then press c.")
 
     capture.release()
     cv2.destroyAllWindows()
@@ -511,7 +471,7 @@ def main() -> None:
         "--known-distance-m",
         type=float,
         default=1.0,
-        help="Known distance for calibration. Put an object in the ROI at this distance and press c.",
+        help="Known distance for calibration. Put a detected object at this distance and press c.",
     )
     parser.add_argument(
         "--object-detector",

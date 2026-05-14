@@ -23,12 +23,11 @@ Before modifying this project, any agent must perform change impact analysis and
 
 ## What It Does
 
-The display shows four panels:
+The display shows three panels:
 
-1. Original camera or video frame.
+1. Camera frame with detection and distance overlay.
 2. Depth heatmap.
-3. Detection and distance overlay.
-4. Top-down position plot.
+3. Top-down position plot.
 
 For phone tracking, YOLO finds the phone bounding box. Depth Anything estimates relative depth inside that box. A one-point calibration maps relative depth to approximate meters.
 
@@ -85,7 +84,7 @@ sequenceDiagram
 
 | Mode | Command value | Purpose |
 |---|---:|---|
-| None | `--object-detector none` | Depth and ROI only |
+| None | `--object-detector none` | Depth display only |
 | Depth blob | `--object-detector depth-blob` | Finds nearest object-like depth region |
 | YOLO phone | `--object-detector yolo-phone` | Detects `cell phone` using YOLOv8n |
 
@@ -161,8 +160,8 @@ estimated_distance_m = calibration_scale / current_relative_depth
 Workflow:
 
 1. Start the app with a known calibration distance, for example `--known-distance-m 1.0`.
-2. Hold the phone or target object inside the ROI at that distance.
-3. Press `c`.
+2. Hold the phone or target object at that distance and wait until it has a detection box.
+3. Press `c`. Calibration uses the detected object's relative depth. If no object is detected, calibration is skipped.
 4. Move the object and watch the estimated `x` and `z` position update.
 
 This is approximate and intended for learning. It is not safety-grade ranging.
@@ -205,6 +204,7 @@ classDiagram
 monocular-depth-sandbox/
   README.md
   AGENTS.md
+  CHANGELOG.md
   QUICK_START.md
   app/
     depth_sandbox.py
