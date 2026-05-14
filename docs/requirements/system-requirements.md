@@ -26,7 +26,7 @@ The system processes video streams from webcams or files to:
 | **SYS-F-003** | Object Detection | System shall detect objects in the frame using configurable detection backend (depth-blob or YOLO) | HIGH |
 | **SYS-F-004** | Distance Calibration | System shall support one-point calibration to map relative depth to meters | MEDIUM |
 | **SYS-F-005** | Position Estimation | System shall estimate 3D position (x, z) of detected object in meters | HIGH |
-| **SYS-F-006** | Real-Time Visualization | System shall display: original frame, depth heatmap, detections overlay, and top-down position plot | HIGH |
+| **SYS-F-006** | Real-Time Visualization | System shall display: camera frame with detection overlay, depth heatmap, and top-down position plot | HIGH |
 | **SYS-F-007** | Output Export | System shall save processed frames and position data to configurable output directory | MEDIUM |
 | **SYS-F-008** | Configuration Management | System shall support runtime configuration via command-line arguments and config files | MEDIUM |
 

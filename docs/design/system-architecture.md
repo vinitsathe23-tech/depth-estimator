@@ -33,7 +33,7 @@ graph TB
     end
     
     subgraph Output["📊 Output"]
-        VIZ["Visualizer<br/>4-Panel Display"]
+        VIZ["Visualizer<br/>3-Panel Display"]
         EXPORT["Data Exporter<br/>Frames & CSV/JSON"]
     end
     
@@ -198,13 +198,12 @@ Where:
 ### 3.4 Output Layer
 
 #### Visualizer
-**Purpose**: Render 4-panel real-time display
+**Purpose**: Render 3-panel real-time display
 
-**Panels** (2x2 layout):
-1. **Top-Left**: Original frame with detection box + center
-2. **Top-Right**: Depth heatmap with color gradient
-3. **Bottom-Left**: Detection overlay with distance label
-4. **Bottom-Right**: Top-down position plot with trajectory
+**Panels**:
+1. **Camera Overlay**: Camera frame with detection box, center marker, and distance label
+2. **Depth Heatmap**: Relative depth visualization with color gradient
+3. **Position Plot**: Top-down x/z position plot
 
 **Key Methods**:
 - `render(frame, depth, detection, position) -> np.ndarray`

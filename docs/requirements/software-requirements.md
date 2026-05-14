@@ -58,10 +58,10 @@ This document specifies software requirements derived from system requirements. 
 
 | ID | Requirement | Traceability |
 |----|----|---|
-| **SWE-F-V-001** | Display original frame in main output panel | SYS-F-006 |
+| **SWE-F-V-001** | Display camera frame with detection overlay in main output panel | SYS-F-006 |
 | **SWE-F-V-002** | Display depth heatmap with color gradient (dark=near, bright=far) | SYS-F-006 |
-| **SWE-F-V-003** | Display detection bounding box and center marker on original frame | SYS-F-006 |
-| **SWE-F-V-004** | Display distance estimate overlay on detection panel | SYS-F-006 |
+| **SWE-F-V-003** | Display detection bounding box and center marker on camera frame | SYS-F-006 |
+| **SWE-F-V-004** | Display distance estimate overlay on detected object panel | SYS-F-006 |
 | **SWE-F-V-005** | Display top-down position plot with object trajectory | SYS-F-006 |
 | **SWE-F-V-006** | Update visualization at same rate as frame capture (no lag) | SYS-NF-001 |
 | **SWE-F-V-007** | Support window resizing without losing display quality | SYS-F-006 |
