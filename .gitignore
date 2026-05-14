@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+
+data/input/*
+data/output/*
+data/yolo_config/*
+!data/input/.gitkeep
+!data/output/.gitkeep
+
+*.avi
+*.mp4
+*.mov
+*.mkv
